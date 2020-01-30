@@ -45,6 +45,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.RememberMeServices;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 
 /**
  * Based on http://docs.spring.io/spring-security/site/docs/3.2.x/reference/htmlsingle/#multiple-httpsecurity
@@ -148,6 +149,8 @@ public class SecurityConfiguration {
                     .antMatchers("/*").permitAll()
                     .antMatchers("/app/rest/authenticate").permitAll()
                     .antMatchers("/app/**").hasAuthority(DefaultPrivileges.ACCESS_IDM);
+            
+            http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
 
             // Custom login form configurer to allow for non-standard HTTP-methods (eg. LOCK)
             CustomFormLoginConfig<HttpSecurity> loginConfig = new CustomFormLoginConfig<>();
@@ -193,6 +196,7 @@ public class SecurityConfiguration {
                     .and()
                     .csrf()
                     .disable();
+            http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
 
             if (idmAppProperties.isRestEnabled()) {
 
@@ -229,6 +233,7 @@ public class SecurityConfiguration {
                 .and()
                 .csrf()
                 .disable();
+            http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
 
             http
                 .requestMatcher(new ActuatorRequestMatcher())
