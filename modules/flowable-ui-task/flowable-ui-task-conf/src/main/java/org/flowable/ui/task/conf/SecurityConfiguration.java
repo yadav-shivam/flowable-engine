@@ -12,6 +12,7 @@
  */
 package org.flowable.ui.task.conf;
 
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.flowable.ui.common.filter.FlowableCookieFilterRegistrationBean;
@@ -39,8 +40,12 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
  * Based on http://docs.spring.io/spring-security/site/docs/3.2.x/reference/htmlsingle/#multiple-httpsecurity
@@ -138,22 +143,47 @@ public class SecurityConfiguration {
             http.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().csrf().disable();
+            http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
+           
 
             if (taskAppProperties.isRestEnabled()) {
 
                 if (restAppProperties.isVerifyRestApiPrivilege()) {
                     http.antMatcher("/*-api/**").authorizeRequests().antMatchers("/*-api/**").hasAuthority(DefaultPrivileges.ACCESS_REST_API).and().httpBasic();
+//					 .and().addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
                 } else {
                     http.antMatcher("/*-api/**").authorizeRequests().antMatchers("/*-api/**").authenticated().and().httpBasic();
+//                    .and().addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
                     
                 }
-                
+//                http.antMatchers(HttpMethod.OPTIONS, "/**").permitAll();
+
             } else {
                 http.antMatcher("/*-api/**").authorizeRequests().antMatchers("/*-api/**").denyAll();
                 
             }
                    
         }
+
+//        @Bean
+//        CorsConfigurationSource corsConfigurationSource() {
+//            CorsConfiguration configuration = new CorsConfiguration();
+//			configuration.applyPermitDefaultValues();
+//            /*
+//			 * configuration.setAllowedOrigins(Collections.singletonList(
+//			 * "http://localhost:4200"));
+//			 * configuration.setAllowedMethods(Arrays.asList("GET","POST", "PUT", "DELETE",
+//			 * "PATCH", "OPTIONS"));
+//			 * configuration.setExposedHeaders(Arrays.asList("Authorization",
+//			 * "content-type"));
+//			 * configuration.setAllowedHeaders(Arrays.asList("Authorization",
+//			 * "content-type"));
+//			 */
+//            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//            source.registerCorsConfiguration("/**", configuration);
+//            return source;
+//        }
+
     }
 
     //

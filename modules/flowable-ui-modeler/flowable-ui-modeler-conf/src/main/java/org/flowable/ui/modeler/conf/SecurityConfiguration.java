@@ -41,6 +41,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.header.writers.XXssProtectionHeaderWriter;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
+
 
 /**
  * Based on http://docs.spring.io/spring-security/site/docs/3.2.x/reference/htmlsingle/#multiple-httpsecurity
@@ -105,11 +107,15 @@ public class SecurityConfiguration {
                         .disable() // Disabled, cause enabling it will cause sessions
                         .headers()
                         .frameOptions()
-                        .sameOrigin()
+                    .disable()
+//                        .sameOrigin()
                         .addHeaderWriter(new XXssProtectionHeaderWriter())
                 .and()
                     .authorizeRequests()
                     .antMatchers(REST_ENDPOINTS_PREFIX + "/**").hasAuthority(DefaultPrivileges.ACCESS_MODELER);
+
+            http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
+
         }
     }
     
@@ -138,6 +144,7 @@ public class SecurityConfiguration {
                 .and()
                     .csrf()
                     .disable();
+            http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
 
             if (modelerAppProperties.isRestEnabled()) {
 
@@ -173,6 +180,7 @@ public class SecurityConfiguration {
                 .and()
                 .csrf()
                 .disable();
+            http.addFilterBefore(new CORSFilter(), ChannelProcessingFilter.class);
 
             http
                 .requestMatcher(new ActuatorRequestMatcher())
