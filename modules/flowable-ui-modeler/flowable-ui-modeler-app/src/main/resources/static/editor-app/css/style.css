@@ -179,6 +179,7 @@
 -------------------------------- */
 div.canvas-wrapper {
     overflow: auto;
+    height: 750px !important;
     background-color: #F8F8F8;
 }
 
@@ -231,7 +232,7 @@ div.canvas-wrapper {
 }
 
 div.propertySection {
-    height: 250px;
+    height: 750px;
     background-color: #e8edf1;
     margin-bottom: 0px;
 }
@@ -282,12 +283,16 @@ div.propertySection {
 .selected-item-body {
     padding: 0;
     overflow: auto;
-    height: 199px;
+    height: 700px;
 }
 
 .selected-item-body > div {
     overflow: hidden;
     margin: 5px 20px;
+}
+
+#canvasHelpWrapper {
+    height: 750px;
 }
 
 .property-row > span {
@@ -884,7 +889,7 @@ hot-table .column-header.label {
 
 #decisionTableGrid tr .input-operator-cell {
     text-align: center;
-    min-width: 70px; !important;
+    min-width: 70px !important;
 }
 
 #decisionTableGrid td.htInvalid {
